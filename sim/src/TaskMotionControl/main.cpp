@@ -103,61 +103,85 @@ int main()
 	LieScrewTrajectory(X0,XT,V0,VT,dV0,dVT,Tf,N,Xd_list,Vd_list,dVd_list);
 	Matrix6d Kp = Matrix6d::Identity();
 	Matrix6d Kd = Matrix6d::Identity();
+	for(int i=0;i<JOINTNUM;i++){
+		switch(i)
+		{
+		case 0:
+			Kp(i,i) = 70;
+			Kd(i,i) = 55;
+			break;		
+		case 1:
+			Kp(i,i) = 70;
+			Kd(i,i) = 55;
+			break;
+		case 2:
+			Kp(i,i) = 40;
+			Kd(i,i) = 30;
+			break;
+		case 3:
+			Kp(i,i) = 25;
+			Kd(i,i) = 15;
+			break;		
+		case 4:
+			Kp(i,i) = 25;
+			Kd(i,i) = 15;
+			break;
+		case 5:
+			Kp(i,i) = 18;
+			Kd(i,i) = 3;
+			break;
+		}
+	}
 	JVec q= indy7.getQ( &sim);
 	JVec dq= indy7.getQdot( &sim);		
+	
 	JVec ddq= JVec::Zero();	
-	for(int i = 0;i<N ;i++){
-
-		JVec e = q_des-q;
-		eint = eint+ e*dt;
+	int i= 0;
+	Vector6d prev_Xe = Vector6d::Zero();
+	while(1){
+		ddq = (dq-prev_dq)/dt;
+		dq= indy7.getQdot( &sim);	
+		q= indy7.getQ( &sim);
+		if(i>N-1){
+			i=N-1;
+		}
+		
 		SE3 Xd = Xd_list.at(i);
 		Vector6d Vd = Vd_list.at(i);
 		Vector6d dVd = dVd_list.at(i);
-		//FKinBody(M0, Blist, q ,dq, T, Jb,dJb);
-		Jacobian Jb = JacobianBody(Blist,q);
+		FKinBody(M0, Blist, q ,dq, T, Jb,dJb);
 		Vector6d V = Jb*dq;	
-
-		Vector6d taskErr = se3ToVec(MatrixLog6(TransInv(T)*Xd));
-		Vector6d taskErrDot = Adjoint(TransInv(T)*Xd)*Vd;
-
-
-		JVec forcePD = Kp*taskErr+Kd*taskErrDot;
+		Vector6d Xe = se3ToVec(MatrixLog6(TransInv(T)*Xd));
+		Vector6d Ve = Adjoint(TransInv(T)*Xd)*Vd-V;
+		prev_Xe = Xe;
+		JVec forcePD = (Kp*Xe+Kd*Ve);
 		JVec G = control.Gravity(q);
 		MassMat M = mr::MassMatrix(q,Mlist,Glist,Slist);
-		JVec C = mr::VelQuadraticForces(q, dq,Mlist,Glist, Slist);
-		T =FKinBody(M0,Blist,q);
-		dq = Jb.inverse()*Vd;
-		JVec  edot = dq_des-dq;
-		JVec ddq_ref =Kd*edot;
-		//JVec torq = M*ddq_ref+C+G;
-		//JVec torq = Jb.transpose()*forcePD+M*ddq+C+G;
-		//dq = Jb.inverse()*Vd;
-		EulerStep(q, dq, ddq, dt);                                  
-		indy7.resetQ(&sim,q);
-		//JVec forcePd = Kp*
-		//JVec clacTorq = control.ComputedTorqueControl( q, dq, q_des, dq_des); // calcTorque
-		//JVec clacPIDTorq = control.ComputedTorquePIDControl( q, dq, q_des, dq_des,eint); // calcTorque
-		//JVec clacHinfTorq= control.HinfControl(  q, dq, q_des, dq_des,ddq_des,eint);
+		Matrix6d Lambda = (Jb.transpose()).inverse()*M*Jb.inverse();
 
+		JVec C = mr::VelQuadraticForces(q, dq,Mlist,Glist, Slist);
+		JVec torq = Jb.transpose()*Lambda*forcePD+M*ddq + C+G;
 		static int print_count = 0;
 		if(++print_count>10){
-			cout<<se3ToVec(MatrixLog6(TransInv(T)*Xd)).transpose()<<endl;
+			cout<<"Xe"<<endl;
+			cout<<se3ToVec(MatrixLog6(TransInv(T)*Xd)).norm()<<endl;
 			print_count = 0;
 		}
 		prev_dq = dq;
-		//indy7.setTorques(&sim,  torq , MAX_TORQUES);
+		indy7.setTorques(&sim,  torq , MAX_TORQUES);
 		sim.stepSimulation();
 		b3Clock::usleep(1000. * 1000. * FIXED_TIMESTEP);
 		t = t+FIXED_TIMESTEP;	
+		i=i+1;
 	}
-	while(1){
-		JVec q= indy7.getQ( &sim);
-		JVec gravTorq = control.Gravity( q);
-		indy7.setTorques(&sim,  gravTorq , MAX_TORQUES);
-		sim.stepSimulation();
-		b3Clock::usleep(1000. * 1000. * FIXED_TIMESTEP);
-		t = t+FIXED_TIMESTEP;	
-	}
+	// while(1){
+	// 	JVec q= indy7.getQ( &sim);
+	// 	JVec gravTorq = control.Gravity( q);
+	// 	indy7.setTorques(&sim,  gravTorq , MAX_TORQUES);
+	// 	sim.stepSimulation();
+	// 	b3Clock::usleep(1000. * 1000. * FIXED_TIMESTEP);
+	// 	t = t+FIXED_TIMESTEP;	
+	// }
 
 	return -1;
     
