@@ -67,7 +67,7 @@ Indy7::Indy7(class b3RobotSimulatorClientAPI_NoDirect* sim,int robotId){
 	}
 	this->eef_num = numJoints-1;
 	this->actuated_joint_num = actuated_joint_num;
-
+	sim->enableJointForceTorqueSensor(this->robotId,this->eef_num,1);
 	
 }
 
@@ -101,6 +101,20 @@ JVec Indy7::getQ(class b3RobotSimulatorClientAPI_NoDirect* sim){
 	}
 	
 	return q;
+}	
+Vector6d Indy7::getFTsensor(class b3RobotSimulatorClientAPI_NoDirect* sim){
+	Vector6d FT;
+	b3JointSensorState jointStates;
+	int numJoints = sim->getNumJoints(this->robotId);
+	
+	if(sim->getJointState(this->robotId,this->eef_num, &jointStates)){
+			for (int i = 0; i < 6; i++)
+		{
+			FT[i] = jointStates.m_jointForceTorque[i];
+		}
+	}
+	
+	return FT;
 }	
 JVec Indy7::getQdot(class b3RobotSimulatorClientAPI_NoDirect* sim){
 	JVec qdot(this->actuated_joint_num);

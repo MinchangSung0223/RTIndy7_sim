@@ -19,6 +19,8 @@ file(GLOB_RECURSE MR_Indy7 ../include/MR_sim/MR_Indy7.h ../include/MR_sim/MR_Ind
 set(EXECUTABLES
     JointHinfControl
     TaskMotionControl
+    HybridMotionForceControl
+    ImpedanceControl
 )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/MR_info.json DESTINATION ${CMAKE_BINARY_DIR})

@@ -87,7 +87,7 @@ int main()
     SE3 X0 = FKinSpace(M0,Slist,q0);
 	SO3 R0 = TransToR(X0);
 	Vector3d p = TransToP(X0);
-	p(2) = p(2)+0.1;
+	
 	SE3 XT= RpToTrans(R0,p);
 	Vector6d V0 = Vector6d::Zero();
 	Vector6d VT = Vector6d::Zero();
@@ -142,6 +142,7 @@ int main()
 		ddq = (dq-prev_dq)/dt;
 		dq= indy7.getQdot( &sim);	
 		q= indy7.getQ( &sim);
+		Vector6d FT = indy7.getFTsensor(&sim);
 		if(i>N-1){
 			i=N-1;
 		}
@@ -169,8 +170,8 @@ int main()
 		JVec torq = Jb.transpose()*(Lambda*forcePD+M*ddq + Eta);
 		static int print_count = 0;
 		if(++print_count>10){
-			cout<<"Xe"<<endl;
-			cout<<se3ToVec(MatrixLog6(TransInv(T)*Xd)).norm()<<endl;
+			
+			cout<<FT.transpose()<<endl;
 			print_count = 0;
 		}
 		prev_dq = dq;

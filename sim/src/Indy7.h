@@ -32,6 +32,7 @@ public:
 	JVec getQdot(class b3RobotSimulatorClientAPI_NoDirect* sim);	
 	SE3 getEEFPose(class b3RobotSimulatorClientAPI_NoDirect* sim);	
 	void resetQ(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec q);
+	Vector6d getFTsensor(class b3RobotSimulatorClientAPI_NoDirect* sim);
 	int getActuatedJointNum(){
 		return this->actuated_joint_num;
 	};

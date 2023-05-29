@@ -247,9 +247,8 @@
       </geometry>	        
     </visual>
         
-        
     <inertial>
-      <mass value="0"/>
+      <mass value="0.0001"/>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
     </inertial>
@@ -264,5 +263,7 @@
     <child link="tcp"/>
     <origin rpy="0.0 0.0 0.0" xyz="0 0 0.06"/>
   </joint> 
+
+
 </robot>
 
