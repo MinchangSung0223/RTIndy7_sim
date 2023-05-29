@@ -87,10 +87,11 @@ int main()
     SE3 X0 = FKinSpace(M0,Slist,q0);
 	SO3 R0 = TransToR(X0);
 	Vector3d p = TransToP(X0);
-	
+	p(2) = p(2)-0.2;
 	SE3 XT= RpToTrans(R0,p);
 	Vector6d V0 = Vector6d::Zero();
 	Vector6d VT = Vector6d::Zero();
+	VT<<0,0,0,0,0,0;
 	Vector6d dV0 = Vector6d::Zero();
 	Vector6d dVT = Vector6d::Zero();
 	
@@ -138,6 +139,53 @@ int main()
 	JVec ddq= JVec::Zero();	
 	int i= 0;
 	Vector6d prev_Xe = Vector6d::Zero();
+	Vector6d sumXe = Vector6d::Zero();
+	Matrix6d K_gamma = Matrix6d::Identity();
+	Matrix6d Hinf_Kp = Matrix6d::Identity();
+	Matrix6d Hinf_Kv = Matrix6d::Identity();
+	Vector6d invL2sqr = Vector6d::Zero();
+	invL2sqr<<200,200,200,800,800,800;
+	for (int i=0; i<6; ++i)
+		{
+			switch(i)
+			{
+			case 0:
+				Hinf_Kp(i,i) = 100.0;
+				Hinf_Kv(i,i) = 20.0;
+				K_gamma(i,i) = 0.2+1.0/invL2sqr(0) ;
+				break;
+			case 1:
+				Hinf_Kp(i,i) = 100.0;
+				Hinf_Kv(i,i) = 20.0;
+				K_gamma(i,i) = 0.2+1.0/invL2sqr(1) ;
+
+				break;
+			case 2:
+				Hinf_Kp(i,i) = 100.0;
+				Hinf_Kv(i,i) = 20.0;
+				K_gamma(i,i) = 0.2+1.0/invL2sqr(2) ;
+
+				break;
+			case 3:
+				Hinf_Kp(i,i) = 100.0;
+				Hinf_Kv(i,i) = 20.0;
+				K_gamma(i,i) = 40+1.0/invL2sqr(3) ;
+
+				break;
+			case 4:
+				Hinf_Kp(i,i) = 100.0;
+				Hinf_Kv(i,i) = 20.0;
+				K_gamma(i,i) = 40+1.0/invL2sqr(4) ;
+
+				break;
+			case 5:
+				Hinf_Kp(i,i) = 100.0;
+				Hinf_Kv(i,i) = 20.0;
+				K_gamma(i,i) = 40+1.0/invL2sqr(5) ;
+
+				break;
+			}
+	}
 	while(1){
 		ddq = (dq-prev_dq)/dt;
 		dq= indy7.getQdot( &sim);	
@@ -154,8 +202,11 @@ int main()
 		Vector6d V = Jb*dq;	
 		Vector6d Xe = se3ToVec(MatrixLog6(TransInv(T)*Xd));
 		Vector6d Ve = Adjoint(TransInv(T)*Xd)*Vd-V;
+		sumXe +=Xe*dt;
 		prev_Xe = Xe;
-		JVec forcePD = (Kp*Xe+Kd*Ve);
+
+
+		JVec ddV_ref = (Hinf_Kv*Ve+Hinf_Kp*Xe);
 		JVec G = control.Gravity(q);
 		MassMat M = mr::MassMatrix(q,Mlist,Glist,Slist);
 		Jacobian invJb = Jb.inverse();
@@ -167,11 +218,11 @@ int main()
 		JVec C = mr::VelQuadraticForces(q, dq,Mlist,Glist, Slist);
 		JVec h = C+G;
 		JVec Eta = invJbT*h-Lambda*dJb*invJb*V;
-		JVec torq = Jb.transpose()*(Lambda*forcePD+M*ddq + Eta);
+		JVec torq = Jb.transpose()*(Lambda*ddV_ref+ Eta+ K_gamma*(Ve+Hinf_Kv*Xe+Hinf_Kp*sumXe));
+		
 		static int print_count = 0;
 		if(++print_count>10){
-			
-			cout<<FT.transpose()<<endl;
+			cout<<Xe.transpose()<<endl;
 			print_count = 0;
 		}
 		prev_dq = dq;
