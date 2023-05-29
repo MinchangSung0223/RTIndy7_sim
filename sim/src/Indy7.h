@@ -18,19 +18,20 @@ class Indy7
 	int eef_num;
 	vector<int> actuated_joint_id;
 	vector<string> actuated_joint_name;
+		
+	
+public:
 	ScrewList Slist;
 	ScrewList Blist;	
 	vector<Matrix6d> Glist;	
 	vector<SE3> Mlist;			
-	SE3 M;				
-	
-public:
+	SE3 M;		
 	Indy7(class b3RobotSimulatorClientAPI_NoDirect* sim,int robotId);
 	void setTorques(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec  torques ,JVec  max_torques );
 	JVec getQ(class b3RobotSimulatorClientAPI_NoDirect* sim);	
 	JVec getQdot(class b3RobotSimulatorClientAPI_NoDirect* sim);	
 	SE3 getEEFPose(class b3RobotSimulatorClientAPI_NoDirect* sim);	
-
+	void resetQ(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec q);
 	int getActuatedJointNum(){
 		return this->actuated_joint_num;
 	};

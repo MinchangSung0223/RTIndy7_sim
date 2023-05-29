@@ -102,7 +102,7 @@ namespace mr {
     JVec wrapToPI(const JVec& angles);
     Vector6d CartesianError(const SE3& X,const SE3& Xd );
     pinvJacobian pinvAnalyticJacobianBody(SE3 M, const ScrewList& Blist, const JVec& thetaList) ;
-  void FkinBody(SE3 M,ScrewList Blist, const JVec& q ,const JVec& dq, SE3 &T, Jacobian &Jb,Jacobian& dJb);
+  void FKinBody(const SE3& M,const ScrewList& Blist, const JVec& q ,const JVec& dq, SE3 &T, Jacobian &Jb,Jacobian& dJb);
   Matrix3d dexp3(const Vector3d& xi);
   Matrix3d dlog3(const Vector3d& xi);
   Matrix3d skew3(const Vector3d& xi) ;

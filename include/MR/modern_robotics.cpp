@@ -884,7 +884,7 @@ namespace mr {
 		return vecq;
 	}
 
-	void FkinBody(SE3 M,ScrewList Blist, const JVec& q ,const JVec& dq, SE3 &T, Jacobian &Jb,Jacobian& dJb){
+	void FKinBody(const SE3& M,const ScrewList& Blist, const JVec& q ,const JVec& dq, SE3 &T, Jacobian &Jb,Jacobian& dJb){
 		Jb = Blist;
 		dJb = Jacobian::Zero();
 		T = SE3::Identity();
@@ -898,6 +898,7 @@ namespace mr {
 				prev_dJidt += Jbi*dq(i);			   
 		}
 		T = M*TransInv(T_);
+		
 	}
 	Matrix3d skew3(const Vector3d& xi) {
 		Matrix3d skew;
@@ -1183,9 +1184,9 @@ void LieScrewTrajectory(const SE3 X0,const SE3 XT,const Vector6d V0,const Vector
 		Vector6d V = dexp6(-lambda_t)*dlambda_t;
 		Vector6d dV = dexp6(-lambda_t)*ddlambda_t+ddexp6(-lambda_t,-dlambda_t)*dlambda_t;
 		SE3 T = X0*MatrixExp6(VecTose3(flip(lambda_t)));
-		Xd_list.at(i) = T;
-		Vd_list.at(i) = flip(V);
-		dVd_list.at(i) = flip(dV);
+		Xd_list.push_back(T);
+		Vd_list.push_back(flip(V));
+		dVd_list.push_back(flip(dV));
 	}
 	
 	

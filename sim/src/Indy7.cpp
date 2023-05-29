@@ -145,7 +145,11 @@ SE3 Indy7::getEEFPose(class b3RobotSimulatorClientAPI_NoDirect* sim){
 	return pose;
 }
 
-
+void Indy7::resetQ(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec q){
+	for (int i = 0; i<q.size();i++){
+		sim->resetJointState(this->robotId,this->actuated_joint_id.at(i),q[i]);
+	}
+}
 Indy7::~Indy7(){
 	
 }
