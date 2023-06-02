@@ -897,6 +897,7 @@ namespace mr {
 				dJb.col(i) = ad(Jbi)*prev_dJidt;
 				prev_dJidt += Jbi*dq(i);			   
 		}
+		T_*= MatrixExp6(VecTose3(-1 * Blist.col(0) * q(0)));
 		T = M*TransInv(T_);
 		
 	}

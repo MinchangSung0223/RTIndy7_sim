@@ -33,6 +33,7 @@ public:
 	SE3 getEEFPose(class b3RobotSimulatorClientAPI_NoDirect* sim);	
 	void resetQ(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec q);
 	Vector6d getFTsensor(class b3RobotSimulatorClientAPI_NoDirect* sim);
+	void applyExtFT(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec FT);
 	int getActuatedJointNum(){
 		return this->actuated_joint_num;
 	};

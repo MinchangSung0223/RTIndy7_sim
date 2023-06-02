@@ -103,7 +103,7 @@ JVec Indy7::getQ(class b3RobotSimulatorClientAPI_NoDirect* sim){
 	return q;
 }	
 Vector6d Indy7::getFTsensor(class b3RobotSimulatorClientAPI_NoDirect* sim){
-	Vector6d FT;
+	Vector6d FT,retFT;
 	b3JointSensorState jointStates;
 	int numJoints = sim->getNumJoints(this->robotId);
 	
@@ -113,8 +113,13 @@ Vector6d Indy7::getFTsensor(class b3RobotSimulatorClientAPI_NoDirect* sim){
 			FT[i] = jointStates.m_jointForceTorque[i];
 		}
 	}
-	
-	return FT;
+	retFT[0] = FT[3];
+	retFT[1] = FT[4];
+	retFT[2] = FT[5];
+	retFT[3] = FT[0];
+	retFT[4] = FT[1];
+	retFT[5] = FT[2];
+	return retFT;
 }	
 JVec Indy7::getQdot(class b3RobotSimulatorClientAPI_NoDirect* sim){
 	JVec qdot(this->actuated_joint_num);
@@ -163,6 +168,22 @@ void Indy7::resetQ(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec q){
 	for (int i = 0; i<q.size();i++){
 		sim->resetJointState(this->robotId,this->actuated_joint_id.at(i),q[i]);
 	}
+}
+void Indy7::applyExtFT(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec FT){
+	btVector3 force ;
+	btVector3 torque ;
+	torque[0] = -FT(0);
+	torque[1] = -FT(1);
+	torque[2] = -FT(2);
+	force[0] = -FT(3);
+	force[1] = -FT(4);
+	force[2] = -FT(5);
+	btVector3 position;
+	position[0]=0;
+	position[1]=0;
+	position[2]=0;
+	sim->applyExternalForce(this->robotId,this->eef_num,force,position,EF_LINK_FRAME);
+	sim->applyExternalTorque(this->robotId,this->eef_num,torque,EF_LINK_FRAME);
 }
 Indy7::~Indy7(){
 	

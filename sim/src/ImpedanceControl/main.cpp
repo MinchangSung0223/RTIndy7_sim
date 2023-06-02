@@ -190,6 +190,9 @@ int main()
 		ddq = (dq-prev_dq)/dt;
 		dq= indy7.getQdot( &sim);	
 		q= indy7.getQ( &sim);
+		Vector6d ExtFT=Vector6d::Zero();
+		//ExtFT(5) = 1;
+		//indy7.applyExtFT(&sim,ExtFT);
 		Vector6d FT = indy7.getFTsensor(&sim);
 		if(i>N-1){
 			i=N-1;
@@ -206,7 +209,7 @@ int main()
 		prev_Xe = Xe;
 
 
-		JVec ddV_ref = (Hinf_Kv*Ve+Hinf_Kp*Xe);
+		JVec dV_ref = (Hinf_Kv*Ve+Hinf_Kp*Xe);
 		JVec G = control.Gravity(q);
 		MassMat M = mr::MassMatrix(q,Mlist,Glist,Slist);
 		Jacobian invJb = Jb.inverse();
@@ -218,14 +221,15 @@ int main()
 		JVec C = mr::VelQuadraticForces(q, dq,Mlist,Glist, Slist);
 		JVec h = C+G;
 		JVec Eta = invJbT*h-Lambda*dJb*invJb*V;
-		JVec torq = Jb.transpose()*(Lambda*ddV_ref+ Eta+ K_gamma*(Ve+Hinf_Kv*Xe+Hinf_Kp*sumXe));
+		JVec torq = Jb.transpose()*(Lambda*dV_ref+ Eta+FT);
 		
 		static int print_count = 0;
 		if(++print_count>10){
-			cout<<Xe.transpose()<<endl;
+			cout<<FT.transpose()<<endl;
 			print_count = 0;
 		}
 		prev_dq = dq;
+		
 		indy7.setTorques(&sim,  torq , MAX_TORQUES);
 		sim.stepSimulation();
 		b3Clock::usleep(1000. * 1000. * FIXED_TIMESTEP);
