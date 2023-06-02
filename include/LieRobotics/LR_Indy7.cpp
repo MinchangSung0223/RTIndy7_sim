@@ -181,12 +181,19 @@ LR_Indy7::LR_Indy7() {
 void LR_Indy7::LRSetup(){
 	Json::Value rootr;
 	bool ret = ReadMRData("MR_info.json",rootr);
+    ScrewList Blist_,Slist_;
 	for(int i =0;i<6 ; i++){
 		for(int j =0;j<6;j++){
-			this->Slist(i,j) = rootr["Slist"][i][j].asDouble();
-			this->Blist(i,j) = rootr["Blist"][i][j].asDouble();
+			Slist_(i,j) = rootr["Slist"][i][j].asDouble();
+			Blist_(i,j) = rootr["Blist"][i][j].asDouble();
 		}
 	}	
+    this->Blist.block<3,JOINTNUM>(0,0) =Blist_.block<3,JOINTNUM>(3,0);
+    this->Blist.block<3,JOINTNUM>(3,0) = Blist_.block<3,JOINTNUM>(0,0);
+    
+    this->Slist.block<3,JOINTNUM>(0,0) = Slist_.block<3,JOINTNUM>(3,0);
+    this->Slist.block<3,JOINTNUM>(3,0) = Slist_.block<3,JOINTNUM>(0,0);
+
     cout<<"=================Slist================="<<endl;
     cout<<this->Slist<<endl;
     cout<<"=================Blist================="<<endl;

@@ -2,6 +2,7 @@
 
     
 #pragma once
+#include <iostream>
 
 #include <Eigen/Dense>
 #include <vector>
@@ -45,8 +46,11 @@ namespace lr {
     Jacobian JacobianSpace(const ScrewList& Slist, const JVec& thetaList);
     Jacobian JacobianBody(const ScrewList& Blist, const JVec& thetaList) ;
     SE3 RpToTrans(const Matrix3d& R, const Vector3d& p);
-
-
+    bool IKinBody(const ScrewList& Blist, const SE3& M, const SE3& T,
+		JVec& thetalist, double eomg, double ev);
+    bool IKinSpace(const ScrewList& Slist, const SE3& M, const SE3& T,
+		JVec& thetalist, double eomg, double ev) ;
+   // JVec InverseDynamics(const JVec& thetalist, const JVec& dthetalist, const JVec& ddthetalist,const Vector3d& g, const Vector6d& Ftip, const vector<SE3>& Mlist,const vector<Matrix6d>& Glist, const ScrewList& Slist);
 }
 
 

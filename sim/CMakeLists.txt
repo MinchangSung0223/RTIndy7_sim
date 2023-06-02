@@ -23,6 +23,7 @@ set(EXECUTABLES
     TaskMotionControl
     HybridMotionForceControl
     ImpedanceControl
+    ModernRoboticsTest
 )
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/MR_info.json DESTINATION ${CMAKE_BINARY_DIR})
 
@@ -34,7 +35,6 @@ foreach(EXECUTABLE ${EXECUTABLES})
 endforeach(EXECUTABLE)
 
 
-
-    add_executable(LieRoboticsTest src/LieRoboticsTest/main.cpp ${LR_Indy7} ${LR} ${PYBULLET_INDY7} )
-    target_link_libraries(LieRoboticsTest PUBLIC pybullet_cpp)
-    target_link_libraries(LieRoboticsTest PUBLIC jsoncpp_lib)
+add_executable(LieRoboticsTest src/LieRoboticsTest/main.cpp ${LR_Indy7} ${LR} ${PYBULLET_INDY7} )
+target_link_libraries(LieRoboticsTest PUBLIC pybullet_cpp)
+target_link_libraries(LieRoboticsTest PUBLIC jsoncpp_lib)

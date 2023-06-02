@@ -214,7 +214,7 @@ namespace lr {
 		SE3 T = SE3::Identity();
 		for (int i = 1; i < JOINTNUM; i++) {
 			T *= MatrixExp6(VecTose3(Slist.col(i - 1) * thetaList(i - 1)));
-			Js.col(i) = AdInv(T) * Slist.col(i);
+			Js.col(i) = Ad(T) * Slist.col(i);
 		}
 		return Js;
 	}	
@@ -223,7 +223,7 @@ namespace lr {
 		SE3 T = SE3::Identity();
 		for (int i = JOINTNUM -2; i >= 0; i--) {
 			T *= MatrixExp6(VecTose3(-1 * Blist.col(i + 1) * thetaList(i + 1)));
-			Jb.col(i) = AdInv(T) * Blist.col(i);
+			Jb.col(i) = Ad(T) * Blist.col(i);
 		}
 		return Jb;
 	}		
@@ -244,9 +244,12 @@ namespace lr {
 		Vector3d linear(Vb(0), Vb(1), Vb(2));
 
 		bool err = (angular.norm() > eomg || linear.norm() > ev);
-		Jacobian Jb;
+		Jacobian Jb_;
+		Eigen::MatrixXd Jb;
 		while (err && i < maxiterations) {
-			Jb = JacobianBody(Blist, thetalist);
+			Jb_ = JacobianBody(Blist, thetalist);
+			Jb = Eigen::Map<Eigen::MatrixXd>(Jb_.data(),6,JOINTNUM);
+						
 			thetalist += Jb.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(Vb);
 			i += 1;
 			// iterate
@@ -265,25 +268,71 @@ namespace lr {
 		int maxiterations = 20;
 		SE3 Tfk = FKinSpace(M, Slist, thetalist);
 		SE3 Tdiff = TransInv(Tfk)*T;
-		Vector6d Vs = AdInv(Tfk)*se3ToVec(MatrixLog6(Tdiff));
+		Vector6d Vs = Ad(Tfk)*se3ToVec(MatrixLog6(Tdiff));
 		Vector3d angular(Vs(3), Vs(4), Vs(5));
 		Vector3d linear(Vs(0), Vs(1), Vs(2));
 
 		bool err = (angular.norm() > eomg || linear.norm() > ev);
-		Jacobian Js;
+		Jacobian Js_;
+		Eigen::MatrixXd Js;
 		while (err && i < maxiterations) {
-			Js = JacobianSpace(Slist, thetalist);
+			Js_ = JacobianSpace(Slist, thetalist);
+			Js = Eigen::Map<Eigen::MatrixXd>(Js_.data(),6,JOINTNUM);
 			thetalist += Js.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(Vs);
 			i += 1;
 			// iterate
 			Tfk = FKinSpace(M, Slist, thetalist);
 			Tdiff = TransInv(Tfk)*T;
-			Vs = AdInv(Tfk)*se3ToVec(MatrixLog6(Tdiff));
+			Vs = Ad(Tfk)*se3ToVec(MatrixLog6(Tdiff));
 			angular = Vector3d(Vs(3), Vs(4), Vs(5));
 			linear = Vector3d(Vs(0), Vs(1), Vs(2));
 			err = (angular.norm() > eomg || linear.norm() > ev);
 		}
 		return !err;
 	}	
+
+	// JVec InverseDynamics(const JVec& thetalist, const JVec& dthetalist, const JVec& ddthetalist,
+	// 								const Vector3d& g, const Vector6d& Ftip, const vector<SE3>& Mlist,
+	// 								const vector<Matrix6d>& Glist, const ScrewList& Slist) {
+	//     // the size of the lists
+	// 	int n = JOINTNUM;
+
+	// 	SE3 Mi = SE3::Identity();
+	// 	Matrix6xn Ai = Matrix6xn::Zero();
+	// 	vector<ScrewList> AdTi;
+	// 	for (int i = 0; i < n+1; i++) {
+	// 		AdTi.push_back(Matrix6d::Zero());
+	// 	}
+	// 	Matrix6xn_1 Vi = Matrix6xn_1::Zero();    // velocity
+	// 	Matrix6xn_1 Vdi = Matrix6xn_1::Zero();   // acceleration
+
+	// 	Vdi.block(3, 0, 3, 1) = - g;
+	// 	AdTi[n] = Ad(TransInv(Mlist[n]));
+	// 	Vector6d Fi = Ftip;
+
+	// 	JVec taulist = JVec::Zero();
+
+	// 	// forward pass
+	// 	for (int i = 0; i < n; i++) {
+	// 		Mi = Mi * Mlist[i];
+	// 		Ai.col(i) = Ad(TransInv(Mi))*Slist.col(i);
+
+	// 		AdTi[i] = Ad(MatrixExp6(VecTose3(Ai.col(i)*-thetalist(i)))
+	// 		          * TransInv(Mlist[i]));
+
+	// 		Vi.col(i+1) = AdTi[i] * Vi.col(i) + Ai.col(i) * dthetalist(i);
+	// 		Vdi.col(i+1) = AdTi[i] * Vdi.col(i) + Ai.col(i) * ddthetalist(i)
+	// 					   + ad(Vi.col(i+1)) * Ai.col(i) * dthetalist(i); // this index is different from book!
+	// 	}
+
+	// 	// backward pass
+	// 	for (int i = n-1; i >= 0; i--) {
+	// 		Fi = AdTi[i+1].transpose() * Fi + Glist[i] * Vdi.col(i+1)
+	// 		     - ad(Vi.col(i+1)).transpose() * (Glist[i] * Vi.col(i+1));
+	// 		taulist(i) = Fi.transpose() * Ai.col(i);
+	// 	}
+	// 	return taulist;
+	// }
+
 }
 

@@ -3,6 +3,7 @@
 #include "include/NRMKSDK/json/json/json.h"
 #include "iostream"
 #include "lie_robotics.h"
+#include <vector>
 
 #pragma comment(lib, "jsoncpp.lib")
 #include <Eigen/Dense>

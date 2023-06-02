@@ -372,9 +372,11 @@ namespace mr {
 		Vector3d linear(Vb(3), Vb(4), Vb(5));
 
 		bool err = (angular.norm() > eomg || linear.norm() > ev);
-		Jacobian Jb;
+		Jacobian Jb_;
+		Eigen::MatrixXd Jb;
 		while (err && i < maxiterations) {
-			Jb = JacobianBody(Blist, thetalist);
+			Jb_ = JacobianBody(Blist, thetalist);
+			Jb = Eigen::Map<Eigen::MatrixXd>(Jb_.data(),6,JOINTNUM);
 			thetalist += Jb.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(Vb);
 			i += 1;
 			// iterate
@@ -398,9 +400,11 @@ namespace mr {
 		Vector3d linear(Vs(3), Vs(4), Vs(5));
 
 		bool err = (angular.norm() > eomg || linear.norm() > ev);
-		Jacobian Js;
+		Jacobian Js_;
+		Eigen::MatrixXd Js;
 		while (err && i < maxiterations) {
-			Js = JacobianSpace(Slist, thetalist);
+			Js_ = JacobianSpace(Slist, thetalist);
+			Js = Eigen::Map<Eigen::MatrixXd>(Js_.data(),6,JOINTNUM);
 			thetalist += Js.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(Vs);
 			i += 1;
 			// iterate
