@@ -180,19 +180,20 @@ LR_Indy7::LR_Indy7() {
 
 void LR_Indy7::LRSetup(){
 	Json::Value rootr;
-	bool ret = ReadMRData("MR_info.json",rootr);
-    ScrewList Blist_,Slist_;
+	bool ret = ReadMRData("LR_info.json",rootr);
+    if(ret!=0) cout<<"NO LR_info.json"<<endl;
+    ScrewList Blist,Slist;
 	for(int i =0;i<6 ; i++){
 		for(int j =0;j<6;j++){
-			Slist_(i,j) = rootr["Slist"][i][j].asDouble();
-			Blist_(i,j) = rootr["Blist"][i][j].asDouble();
+			this->Slist(i,j) = rootr["Slist"][i][j].asDouble();
+			this->Blist(i,j) = rootr["Blist"][i][j].asDouble();
 		}
 	}	
-    this->Blist.block<3,JOINTNUM>(0,0) =Blist_.block<3,JOINTNUM>(3,0);
-    this->Blist.block<3,JOINTNUM>(3,0) = Blist_.block<3,JOINTNUM>(0,0);
+    //this->Blist.block<3,JOINTNUM>(0,0) =Blist_.block<3,JOINTNUM>(3,0);
+    //this->Blist.block<3,JOINTNUM>(3,0) = Blist_.block<3,JOINTNUM>(0,0);
     
-    this->Slist.block<3,JOINTNUM>(0,0) = Slist_.block<3,JOINTNUM>(3,0);
-    this->Slist.block<3,JOINTNUM>(3,0) = Slist_.block<3,JOINTNUM>(0,0);
+//    this->Slist.block<3,JOINTNUM>(0,0) = Slist_.block<3,JOINTNUM>(3,0);
+    //this->Slist.block<3,JOINTNUM>(3,0) = Slist_.block<3,JOINTNUM>(0,0);
 
     cout<<"=================Slist================="<<endl;
     cout<<this->Slist<<endl;
@@ -213,6 +214,7 @@ void LR_Indy7::LRSetup(){
 	}
 	for(int i = 0;i< rootr["Glist"].size(); i++){
 		MatrixXd G = MatrixXd::Identity(6,6);
+        //MatrixXd G_=MatrixXd::Identity(6,6);
 		for(int j = 0;j< rootr["Glist"][0].size(); j++){
 			for(int k = 0;k< rootr["Glist"][0][0].size(); k++){
 				G(j,k) = rootr["Glist"][i][j][k].asDouble();
@@ -220,6 +222,9 @@ void LR_Indy7::LRSetup(){
 		}
         cout<<"=================G"<<i<<"============================"<<endl;
         cout<<G<<endl;
+
+       // G_.block<3,3>(0,0) = G.block<3,3>(3,3);
+        //G_.block<3,3>(3,3) = G.block<3,3>(0,0);
 		char str[50];		
 		this->Glist.push_back(G);	}	
 	for (int i = 0;i<4;i++){

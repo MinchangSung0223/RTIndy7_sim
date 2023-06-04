@@ -50,7 +50,33 @@ namespace lr {
 		JVec& thetalist, double eomg, double ev);
     bool IKinSpace(const ScrewList& Slist, const SE3& M, const SE3& T,
 		JVec& thetalist, double eomg, double ev) ;
-   // JVec InverseDynamics(const JVec& thetalist, const JVec& dthetalist, const JVec& ddthetalist,const Vector3d& g, const Vector6d& Ftip, const vector<SE3>& Mlist,const vector<Matrix6d>& Glist, const ScrewList& Slist);
+    JVec InverseDynamics(const JVec& thetalist, const JVec& dthetalist, const JVec& ddthetalist,
+                  const Vector3d& g, const Vector6d& Ftip, const std::vector<SE3>& Mlist,
+                  const std::vector<Matrix6d>& Glist, const ScrewList& Slist);
+    JVec GravityForces(const JVec& thetalist, const Vector3d& g,
+                  const std::vector<SE3>& Mlist, const std::vector<Matrix6d>& Glist, const ScrewList& Slist) ;                                    
+    MassMat MassMatrix(const JVec& thetalist, const std::vector<SE3>& Mlist, const std::vector<Matrix6d>& Glist, const ScrewList& Slist) ;                                    
+    JVec VelQuadraticForces(const JVec& thetalist, const JVec& dthetalist,const std::vector<SE3>& Mlist, const std::vector<Matrix6d>& Glist, const ScrewList& Slist) ;
+    JVec EndEffectorForces(const JVec& thetalist, const Vector6d& Ftip,const std::vector<SE3>& Mlist, const std::vector<Matrix6d>& Glist, const ScrewList& Slist);
+    JVec ForwardDynamics(const JVec& thetalist, const JVec& dthetalist, const JVec& taulist,
+                  const Vector3d& g, const Vector6d& Ftip, const std::vector<SE3>& Mlist,
+                  const std::vector<Matrix6d>& Glist, const ScrewList& Slist);                      
+    void EulerStep(JVec& thetalist, JVec& dthetalist, const JVec& ddthetalist, double dt);                                    
+    Vector3d QuinticTimeScalingKinematics(double s0,double sT,double ds0,double dsT,double dds0,double ddsT,double Tf, double t) ;
+    void FKinBody(const SE3& M,const ScrewList& Blist, const JVec& q ,const JVec& dq, SE3 &T, Jacobian &Jb,Jacobian& dJb);
+    Matrix3d dexp3(const Vector3d& xi);
+    Matrix3d dlog3(const Vector3d& xi);
+    Matrix3d skew3(const Vector3d& xi) ;
+    Matrix6d dexp6(const Vector6d& lambda);
+    Matrix3d ddexp3(const Vector3d& xi, const Vector3d& dxi);
+    Matrix3d dddexp3(const Vector3d& xi, const Vector3d& dxi, const Vector3d& y, const Vector3d& dy);
+    Matrix6d ddexp6(const Vector6d& lambda, const Vector6d& lambda_dot);
+    Matrix3d skew_sum(const Vector3d& a, const Vector3d& b);
+    Matrix3d ddlog3(const Vector3d& xi, const Vector3d& dxi);
+    Matrix3d dddlog3(const Vector3d& xi, const Vector3d& dxi, const Vector3d& y, const Vector3d& dy);
+    Matrix6d dlog6(const Vector6d& lambda);
+    Matrix6d ddlog6(const Vector6d& lambda, const Vector6d& lambda_dot) ;    
+    void LieScrewTrajectory(const SE3 X0,const SE3 XT,const Vector6d V0,const Vector6d VT,const Vector6d dV0,const Vector6d dVT,double Tf,int N,std::vector<SE3>&Xd_list,std::vector<Vector6d>&Vd_list,std::vector<Vector6d>&dVd_list);
 }
 
 

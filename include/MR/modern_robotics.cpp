@@ -443,10 +443,8 @@ namespace mr {
 		for (int i = 0; i < n; i++) {
 			Mi = Mi * Mlist[i];
 			Ai.col(i) = Adjoint(TransInv(Mi))*Slist.col(i);
-
 			AdTi[i] = Adjoint(MatrixExp6(VecTose3(Ai.col(i)*-thetalist(i)))
 			          * TransInv(Mlist[i]));
-
 			Vi.col(i+1) = AdTi[i] * Vi.col(i) + Ai.col(i) * dthetalist(i);
 			Vdi.col(i+1) = AdTi[i] * Vdi.col(i) + Ai.col(i) * ddthetalist(i)
 						   + ad(Vi.col(i+1)) * Ai.col(i) * dthetalist(i); // this index is different from book!

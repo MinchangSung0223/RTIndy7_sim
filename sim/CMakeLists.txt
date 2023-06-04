@@ -9,6 +9,7 @@ include_directories(${EIGEN3_INCLUDE_DIRS})
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/*")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../include")
 
 add_subdirectory(bullet3)
 
@@ -26,6 +27,7 @@ set(EXECUTABLES
     ModernRoboticsTest
 )
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/MR_info.json DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/LR_info.json DESTINATION ${CMAKE_BINARY_DIR})
 
 foreach(EXECUTABLE ${EXECUTABLES})
     file(GLOB EXECUTABLE_SOURCE src/${EXECUTABLE}/*.cpp)
