@@ -9,5 +9,12 @@ make -j16
 ```
 2.start
 ```bash
-
+   ./${EXCUTABLE FILES}
 ```
+
+
++ 
+```bash
+   ./${EXCUTABLE FILES}
+```
+
