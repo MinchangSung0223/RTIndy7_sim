@@ -62,8 +62,8 @@ int main(){
     vector<Vector6d> dVd_list;
     LieScrewTrajectory(X0,XT,V0,VT,dV0,dVT,Tf,N,Xd_list,Vd_list,dVd_list);
 
-    cout<<Xd_list.at(500)<<endl;
-    
+    cout<<Xd_list.at(2500)<<endl;
+
 
     return -1;
 }
