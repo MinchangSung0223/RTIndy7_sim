@@ -12,9 +12,11 @@ make -j16
    ./${EXCUTABLE FILES}
 ```
 
-
-+ 
++ How to make MR_info.json or LR_info.json
 ```bash
-   ./${EXCUTABLE FILES}
+   cd urdf_loader
+   python3 urdf_to_MR.py ${urdf_path}
+   or
+   python3 urdf_to_LR.py ${urdf_path}
 ```
 
