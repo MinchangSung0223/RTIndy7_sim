@@ -517,6 +517,35 @@ namespace mr {
 		ddq_des =ddst * qT  - ddst*q0;
 		
 	}
+	void JointTrajectoryList(const JVec q0, const JVec qT, double Tf,int N, int method , 
+	 vector<JVec>& q_des_list,  vector<JVec>& dq_des_list,   vector<JVec>& ddq_des_list) {
+		
+		double timegap = Tf /(N/1.0 - 1.0);
+		for (int i = 0;i<N;i++){
+			double st;
+			double dst;
+			double ddst;
+			double t= timegap*(i-1);
+			if (method == 3){
+				st = CubicTimeScaling(Tf, t);
+				dst = CubicTimeScalingDot(Tf, t);
+				ddst = CubicTimeScalingDdot(Tf, t);
+			}
+				
+			else{
+				st = QuinticTimeScaling(Tf, t);
+				dst = QuinticTimeScalingDot(Tf, t);
+				ddst = QuinticTimeScalingDdot(Tf, t);
+			}
+				
+			JVec q_des =st * qT + (1 - st)*q0;
+			JVec dq_des =dst * qT  - dst*q0;
+			JVec ddq_des =ddst * qT  - ddst*q0;
+			q_des_list.push_back(q_des);
+			dq_des_list.push_back(dq_des);
+			ddq_des_list.push_back(ddq_des);
+		}
+	}	
 	JVec EndEffectorForces(const JVec& thetalist, const Vector6d& Ftip,const vector<SE3>& Mlist, const vector<Matrix6d>& Glist, const ScrewList& Slist) {
 		int n = JOINTNUM;
 		JVec dummylist = JVec::Zero();

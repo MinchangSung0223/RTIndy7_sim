@@ -1,8 +1,12 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include <cmath>
 #include <vector>
+#include <iostream>
+#include <chrono>
 #define JOINTNUM 6
+
 namespace mr {
     typedef Eigen::Matrix<double, JOINTNUM, 1> JVec;
     typedef Eigen::Matrix<double, 4, 4> SE3;
@@ -96,6 +100,7 @@ namespace mr {
     Jacobian dJacobianBody(const Jacobian& Jb ,const JVec& dthetaList);
     Jacobian dAnalyticJacobianBody(const SE3&M, const ScrewList& Blist, const JVec& thetaList ,const JVec& dthetaList);
     void JointTrajectory(const JVec q0, const JVec qT, double Tf, double t , int method , JVec& q_des, JVec& dq_des, JVec& ddq_des);
+    void JointTrajectoryList(const JVec q0, const JVec qT, double Tf,int N, int method ,  std::vector<JVec>& q_des_list,  std::vector<JVec>& dq_des_list,  std::vector<JVec>& ddq_des_list);
     double wrapTo2PI(double angle);
     double wrapToPI(double angle);
     JVec wrapTo2PI(const JVec& angles);

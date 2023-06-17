@@ -175,6 +175,62 @@ JVec MR_Indy7::HinfControl( JVec q,JVec dq,JVec q_des,JVec dq_des,JVec ddq_des,J
     JVec torq = Mmat*ddq_ref+C+G+(Hinf_K_gamma)*(edot + Hinf_Kv*e + Hinf_Kp*eint);
     return torq;
 }
+JVec MR_Indy7::HinfControlSim( JVec q,JVec dq,JVec q_des,JVec dq_des,JVec ddq_des,JVec& eint){
+    Vector6d invL2sqr=Vector6d::Zero();
+    invL2sqr<<800.0,600.0,500.0,500.0,500.0,600.0;
+    Vector6d K=Vector6d::Zero();
+    K<<50,30,30,3,3,0.1;
+    for (int i=0; i<6; ++i)
+    {
+        switch(i)
+        {
+        case 0:
+            Hinf_Kp(i,i) = 100.0;
+            Hinf_Kv(i,i) = 20.0;
+            Hinf_K_gamma(i,i) = K(i)+1.0/invL2sqr(i) ;
+            break;
+        case 1:
+            Hinf_Kp(i,i) = 100.0;
+            Hinf_Kv(i,i) = 20.0;
+            Hinf_K_gamma(i,i) = K(i)+1.0/invL2sqr(i) ;
+
+            break;
+        case 2:
+            Hinf_Kp(i,i) = 100.0;
+            Hinf_Kv(i,i) = 20.0;
+            Hinf_K_gamma(i,i) = K(i)+1.0/invL2sqr(i) ;
+
+            break;
+        case 3:
+            Hinf_Kp(i,i) = 100.0;
+            Hinf_Kv(i,i) = 20.0;
+            Hinf_K_gamma(i,i) = K(i)+1.0/invL2sqr(i) ;
+
+            break;
+        case 4:
+            Hinf_Kp(i,i) = 100.0;
+            Hinf_Kv(i,i) = 20.0;
+            Hinf_K_gamma(i,i) = K(i)+1.0/invL2sqr(i) ;
+
+            break;
+        case 5:
+            Hinf_Kp(i,i) = 100.0;
+            Hinf_Kv(i,i) = 20.0;
+            Hinf_K_gamma(i,i) = K(i)+1.0/invL2sqr(i) ;
+
+            break;
+        }
+    }
+
+    JVec e = q_des-q;
+    JVec edot = dq_des-dq;
+    MassMat Mmat = mr::MassMatrix(q,this->Mlist, this->Glist, this->Slist);
+    JVec C = mr::VelQuadraticForces(q, dq,this->Mlist, this->Glist, this->Slist);
+    JVec G = mr::GravityForces(q,this->g,this->Mlist, this->Glist, this->Slist) ; 
+    JVec ddq_ref = ddq_des+Hinf_Kv*edot+Hinf_Kp*e;
+    JVec torq = Mmat*ddq_ref+C+G+(Hinf_K_gamma)*(edot + Hinf_Kv*e + Hinf_Kp*eint);
+    return torq;
+}
 
 void MR_Indy7::MRSetup(){
 	Json::Value rootr;

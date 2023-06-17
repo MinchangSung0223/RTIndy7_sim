@@ -9,7 +9,7 @@
 #include "Indy7.h"
 
 #include "../../include/MR/modern_robotics.h"
-#include "../../include/MR_sim/MR_Indy7.h"
+#include "../../include/MR/MR_Indy7.h"
 #include <vector>
 #include <iostream>
 

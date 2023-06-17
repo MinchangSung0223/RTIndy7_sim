@@ -9,7 +9,7 @@
 #include "Indy7.h"
 
 #include "../../include/MR/modern_robotics.h"
-#include "../../include/MR_sim/MR_Indy7.h"
+#include "../../include/MR/MR_Indy7.h"
 #include <vector>
 #include <iostream>
 
@@ -70,26 +70,40 @@ int main()
 	JVec prev_dq = JVec::Zero();
 	JVec q0 = JVec::Zero();
 	JVec qT = JVec::Zero();
+	JVec qT1 = JVec::Zero();
+	JVec qT2 = JVec::Zero();
 	qT<<1.0,1.0,1.0,1.0,1.0,1.0;
+	qT1<<0,0,0,0,0,0;
+	qT2<<1.0,1.0,1.0,1.0,1.0,1.0;
 	int traj_flag = 0;
 	double Tf = 1.0;
+	vector<JVec> q_des_list;
+	vector<JVec> dq_des_list;
+	vector<JVec> ddq_des_list;
+	JointTrajectoryList(q0, qT, Tf, int(Tf/dt), 5 , q_des_list, dq_des_list, ddq_des_list) ;
+	JointTrajectoryList(qT, qT1, Tf, int(Tf/dt), 5 , q_des_list, dq_des_list, ddq_des_list) ;
+	JointTrajectoryList(qT1, qT2, Tf, int(Tf/dt), 5 , q_des_list, dq_des_list, ddq_des_list) ;
+	JointTrajectoryList(qT2, q0, Tf, int(Tf/dt), 5 , q_des_list, dq_des_list, ddq_des_list) ;
+	int i =0;
 	while(1){
 		JVec q= indy7.getQ( &sim);
 		JVec dq= indy7.getQdot( &sim);		
 		JVec ddq= (prev_dq-dq)/dt;
 		JVec e = q_des-q;
 		eint = eint+ e*dt;
-		
+		q_des = q_des_list.at(i);
+		dq_des = dq_des_list.at(i);
+		ddq_des = ddq_des_list.at(i++);
 		if(traj_flag ==0){
 				q0 = q;
 				traj_flag =1;
 			}
-		JointTrajectory(q0, qT, Tf, t , 5 , q_des, dq_des, ddq_des) ;
+		
 
 		JVec gravTorq = control.Gravity( q);
 		JVec clacTorq = control.ComputedTorqueControl( q, dq, q_des, dq_des); // calcTorque
 		JVec clacPIDTorq = control.ComputedTorquePIDControl( q, dq, q_des, dq_des,eint); // calcTorque
-		JVec clacHinfTorq= control.HinfControl(  q, dq, q_des, dq_des,ddq_des,eint);
+		JVec clacHinfTorq= control.HinfControlSim(  q, dq, q_des, dq_des,ddq_des,eint);
 
 		static int print_count = 0;
 		if(++print_count>100){
