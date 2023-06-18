@@ -29,6 +29,9 @@ public:
 
     mr::Vector3d g;
     mr::JVec  torq;
+    mr::JVec  eint;
+    mr::JVec  e;
+    mr::JVec  edot;
 
     mr::Matrix6d Kp;
     mr::Matrix6d Kv;

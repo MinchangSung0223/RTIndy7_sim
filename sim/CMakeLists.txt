@@ -15,6 +15,7 @@ add_subdirectory(bullet3)
 
 file(GLOB_RECURSE PYBULLET_INDY7 src/Indy7.cpp src/Indy7.h)
 file(GLOB_RECURSE MR ../include/MR/modern_robotics.h ../include/MR/modern_robotics.cpp)
+file(GLOB_RECURSE relMR ../include/MR/modern_robotics_relative.h ../include/MR/modern_robotics_relative.cpp)
 file(GLOB_RECURSE LR ../include/LieRobotics/lie_robotics.h ../include/LieRobotics/lie_robotics.cpp)
 file(GLOB_RECURSE MR_Indy7 ../include/MR/MR_Indy7.h ../include/MR/MR_Indy7.cpp)
 file(GLOB_RECURSE MR_Indy7_DualArm ../include/MR/MR_Indy7_DualArm.h ../include/MR/MR_Indy7_DualArm.cpp)
@@ -33,7 +34,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/LR_info.json DESTINATION ${CMAKE_BINARY_DI
 
 foreach(EXECUTABLE ${EXECUTABLES})
     file(GLOB EXECUTABLE_SOURCE src/${EXECUTABLE}/*.cpp)
-    add_executable(${EXECUTABLE} ${EXECUTABLE_SOURCE} ${MR_Indy7}  ${MR} ${MR_Indy7_DualArm} ${PYBULLET_INDY7} )
+    add_executable(${EXECUTABLE} ${EXECUTABLE_SOURCE} ${MR_Indy7}  ${relMR} ${MR} ${MR_Indy7_DualArm} ${PYBULLET_INDY7} )
     target_link_libraries(${EXECUTABLE} PUBLIC pybullet_cpp)
     target_link_libraries(${EXECUTABLE} PUBLIC jsoncpp_lib)
 endforeach(EXECUTABLE)

@@ -5,6 +5,7 @@
 #include "MR_Indy7.h"
 
 #include "modern_robotics.h"
+#include "modern_robotics_relative.h"
 
 #pragma comment(lib, "jsoncpp.lib")
 #include <Eigen/Dense>
@@ -20,8 +21,8 @@ public:
     MR_Indy7* left_arm;
     MR_Indy7* right_arm;
     unsigned int jointnum;
-    relScrewList Slist;
-    relScrewList Blist;
+    relmr::ScrewList Slist;
+    relmr::ScrewList Blist;
 
     mr::SE3 M;
     mr::SE3 Tbl;
@@ -48,6 +49,12 @@ public:
     mr::Matrix6d Hinf_K_gamma;
 
     void MRSetup();
+    void setq(mr::JVec q_l, mr::JVec q_r);
+    void setdq(mr::JVec dq_l, mr::JVec dq_r);
+    void getq(mr::JVec& q_l, mr::JVec& q_r);
+    void getdq(mr::JVec& dq_l, mr::JVec& dq_r);
+
+
     //JVec Gravity( JVec q);
     //JVec ComputedTorqueControl( JVec q,JVec dq,JVec q_des,JVec dq_des);
     //void saturationMaxTorque(JVec &torque, JVec MAX_TORQUES);
