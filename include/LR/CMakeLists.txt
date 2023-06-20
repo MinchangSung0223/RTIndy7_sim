@@ -14,5 +14,4 @@ target_include_directories( ${PROJECT_NAME}
         PUBLIC ${PROJECT_SOURCE_DIR})
 
 find_package(Eigen3 3.0 REQUIRED NO_MODULE)
-find_package(jsoncpp REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen jsoncpp)
