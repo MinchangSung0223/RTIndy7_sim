@@ -23,7 +23,7 @@ add_subdirectory(include/MR)
 add_subdirectory(include/LR)
 add_subdirectory(include/SimRobot)
 add_subdirectory(include/bullet3)
-add_subdirectory(include/matplotplusplus)
+add_subdirectory(matplotplusplus)
 
 file(GLOB_RECURSE PYBULLET_INDY7 src/Indy7.cpp src/Indy7.h)
 
