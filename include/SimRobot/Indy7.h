@@ -11,6 +11,7 @@
 using namespace Eigen;
 using namespace std;
 using namespace mr;
+
 class Indy7
 {
 	int robotId;
@@ -22,14 +23,14 @@ class Indy7
 public:
 
 	Indy7(class b3RobotSimulatorClientAPI_NoDirect* sim,int robotId);
-	void setTorques(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec  torques ,JVec  max_torques );
-	JVec getQ(class b3RobotSimulatorClientAPI_NoDirect* sim);	
-	JVec getQdot(class b3RobotSimulatorClientAPI_NoDirect* sim);	
-	SE3 getEEFPose(class b3RobotSimulatorClientAPI_NoDirect* sim);	
-	void resetQ(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec q);
-	Vector6d getFTsensor(class b3RobotSimulatorClientAPI_NoDirect* sim);
-	void applyExtFT(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec FT);
-	int getActuatedJointNum(){
+	void set_torque(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec  torques ,JVec  max_torques );
+	JVec get_q(class b3RobotSimulatorClientAPI_NoDirect* sim);	
+	JVec get_qdot(class b3RobotSimulatorClientAPI_NoDirect* sim);	
+	SE3 get_eef_pose(class b3RobotSimulatorClientAPI_NoDirect* sim);	
+	void reset_q(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec q);
+	Vector6d get_FT(class b3RobotSimulatorClientAPI_NoDirect* sim);
+	void apply_ext_FT(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec FT);
+	int get_actuated_joint_num(){
 		return this->actuated_joint_num;
 	};
 	

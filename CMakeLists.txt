@@ -23,6 +23,7 @@ add_subdirectory(include/MR)
 add_subdirectory(include/LR)
 add_subdirectory(include/SimRobot)
 add_subdirectory(include/bullet3)
+add_subdirectory(include/matplotplusplus)
 
 file(GLOB_RECURSE PYBULLET_INDY7 src/Indy7.cpp src/Indy7.h)
 
@@ -44,6 +45,7 @@ foreach(EXECUTABLE ${EXECUTABLES})
         sub::LR
         sub::SimRobot
         pybullet_cpp
+        matplot
     )
 endforeach(EXECUTABLE)
 

@@ -79,7 +79,7 @@ int main()
 	JVec qT = JVec::Zero();
 	q0<<0,0,-M_PI/2.0,0,-M_PI/2.0,0;
 	qT<<0.5,0,-M_PI/2.0,0,-M_PI/2.0,0;
-	indy7.resetQ(&sim,q0);
+	indy7.reset_q(&sim,q0);
 	int traj_flag = 0;
 	double Tf = 10.0;
 	int N = 1000;
@@ -132,16 +132,16 @@ int main()
 			break;
 		}
 	}
-	JVec q= indy7.getQ( &sim);
-	JVec dq= indy7.getQdot( &sim);		
+	JVec q= indy7.get_q( &sim);
+	JVec dq= indy7.get_qdot( &sim);		
 	
 	JVec ddq= JVec::Zero();	
 	int i= 0;
 	Vector6d prev_Xe = Vector6d::Zero();
 	while(1){
 		ddq = (dq-prev_dq)/dt;
-		dq= indy7.getQdot( &sim);	
-		q= indy7.getQ( &sim);
+		dq= indy7.get_qdot( &sim);	
+		q= indy7.get_q( &sim);
 		if(i>N-1){
 			i=N-1;
 		}
@@ -174,7 +174,7 @@ int main()
 			print_count = 0;
 		}
 		prev_dq = dq;
-		indy7.setTorques(&sim,  torq , MAX_TORQUES);
+		indy7.set_torque(&sim,  torq , MAX_TORQUES);
 		sim.stepSimulation();
 		b3Clock::usleep(1000. * 1000. * FIXED_TIMESTEP);
 		t = t+FIXED_TIMESTEP;	

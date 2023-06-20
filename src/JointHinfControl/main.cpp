@@ -86,8 +86,8 @@ int main()
 	JointTrajectoryList(qT2, q0, Tf, int(Tf/dt), 5 , q_des_list, dq_des_list, ddq_des_list) ;
 	int i =0;
 	while(1){
-		JVec q= indy7.getQ( &sim);
-		JVec dq= indy7.getQdot( &sim);		
+		JVec q= indy7.get_q( &sim);
+		JVec dq= indy7.get_qdot( &sim);		
 		JVec ddq= (prev_dq-dq)/dt;
 		JVec e = q_des-q;
 		eint = eint+ e*dt;
@@ -113,7 +113,7 @@ int main()
 			print_count = 0;
 		}
 		prev_dq = dq;
-		indy7.setTorques(&sim,  clacHinfTorq , MAX_TORQUES);
+		indy7.set_torque(&sim,  clacHinfTorq , MAX_TORQUES);
 		sim.stepSimulation();
 		b3Clock::usleep(1000. * 1000. * FIXED_TIMESTEP);
 		t = t+FIXED_TIMESTEP;	

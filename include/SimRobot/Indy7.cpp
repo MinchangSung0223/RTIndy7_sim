@@ -11,7 +11,7 @@
 using namespace std;
 using namespace Eigen;
 
-void printVector(JVec vec,string str){
+void print_vec(JVec vec,string str){
 	cout<<str<<":";
 	for(int i = 0;i<vec.rows()-1;i++)
 		cout<<vec[i]<<",";
@@ -19,7 +19,7 @@ void printVector(JVec vec,string str){
 	cout<<""<<endl;
 		
 }
-void printMatrix(SE3 mat,string str){
+void print_mat(SE3 mat,string str){
 
 int strlen = str.length();	
 const char* sep ="-";
@@ -78,7 +78,7 @@ JVec saturate(JVec val, JVec max_val){
 	}
 	return retVal;
 }
-void Indy7::setTorques(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec  torques ,JVec  max_torques){
+void Indy7::set_torque(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec  torques ,JVec  max_torques){
 	b3RobotSimulatorJointMotorArgs controlArgs(CONTROL_MODE_TORQUE);
 	JVec saturated_torques = saturate(torques,max_torques);
 	for (int i = 0; i<torques.size();i++){
@@ -86,7 +86,7 @@ void Indy7::setTorques(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec  torqu
 		sim->setJointMotorControl(this->robotId,this->actuated_joint_id.at(i),controlArgs);
 	}	
 }
-JVec Indy7::getQ(class b3RobotSimulatorClientAPI_NoDirect* sim){
+JVec Indy7::get_q(class b3RobotSimulatorClientAPI_NoDirect* sim){
 	JVec q(this->actuated_joint_num);
 	b3JointSensorState jointStates;
 	
@@ -102,7 +102,7 @@ JVec Indy7::getQ(class b3RobotSimulatorClientAPI_NoDirect* sim){
 	
 	return q;
 }	
-Vector6d Indy7::getFTsensor(class b3RobotSimulatorClientAPI_NoDirect* sim){
+Vector6d Indy7::get_FT(class b3RobotSimulatorClientAPI_NoDirect* sim){
 	Vector6d FT,retFT;
 	b3JointSensorState jointStates;
 	int numJoints = sim->getNumJoints(this->robotId);
@@ -121,7 +121,7 @@ Vector6d Indy7::getFTsensor(class b3RobotSimulatorClientAPI_NoDirect* sim){
 	retFT[5] = FT[2];
 	return retFT;
 }	
-JVec Indy7::getQdot(class b3RobotSimulatorClientAPI_NoDirect* sim){
+JVec Indy7::get_qdot(class b3RobotSimulatorClientAPI_NoDirect* sim){
 	JVec qdot(this->actuated_joint_num);
 	b3JointSensorState jointStates;
 	int numJoints = sim->getNumJoints(this->robotId);
@@ -136,7 +136,7 @@ JVec Indy7::getQdot(class b3RobotSimulatorClientAPI_NoDirect* sim){
 
 	return qdot;
 }	
-SE3 Indy7::getEEFPose(class b3RobotSimulatorClientAPI_NoDirect* sim){
+SE3 Indy7::get_eef_pose(class b3RobotSimulatorClientAPI_NoDirect* sim){
 	SE3 pose = SE3::Identity(4,4);
 	b3LinkState linkState;
 	bool computeVelocity = true;
@@ -145,10 +145,7 @@ SE3 Indy7::getEEFPose(class b3RobotSimulatorClientAPI_NoDirect* sim){
 	JVec pos(3,1);
 	pos<< linkState.m_worldLinkFramePosition[0], linkState.m_worldLinkFramePosition[1] , linkState.m_worldLinkFramePosition[2];
 	btQuaternion orn = btQuaternion(linkState.m_worldLinkFrameOrientation[0],linkState.m_worldLinkFrameOrientation[1],linkState.m_worldLinkFrameOrientation[2],linkState.m_worldLinkFrameOrientation[3]);
-	//cout<<"quat : "<<orn[0]<<orn[1]<<orn[2]<<orn[3]<<endl;
 	btMatrix3x3 R = btMatrix3x3(orn);
-	//btVector3 ret =  sim->getEulerFromQuaternion(orn);
-	//MatrixXd R = orn.normalized().toRotationMatrix() ;
 	pose(0,3) = pos[0];
 	pose(1,3) = pos[1];
 	pose(2,3) = pos[2];		
@@ -164,12 +161,12 @@ SE3 Indy7::getEEFPose(class b3RobotSimulatorClientAPI_NoDirect* sim){
 	return pose;
 }
 
-void Indy7::resetQ(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec q){
+void Indy7::reset_q(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec q){
 	for (int i = 0; i<q.size();i++){
 		sim->resetJointState(this->robotId,this->actuated_joint_id.at(i),q[i]);
 	}
 }
-void Indy7::applyExtFT(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec FT){
+void Indy7::apply_ext_FT(class b3RobotSimulatorClientAPI_NoDirect* sim,JVec FT){
 	btVector3 force ;
 	btVector3 torque ;
 	torque[0] = -FT(0);
