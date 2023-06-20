@@ -22,6 +22,7 @@ namespace relmr {
     typedef Eigen::Matrix<double, 6, RELJOINTNUM> Matrix6xn;
     typedef Eigen::Matrix<double, 6, RELJOINTNUM+1> Matrix6xn_1;
     typedef Eigen::Matrix<double, RELJOINTNUM, RELJOINTNUM> MassMat;
+    typedef Eigen::Matrix<double, RELJOINTNUM, RELJOINTNUM> Matrixnxn;
     so3 VecToso3(const Vector3d& omg);
     Matrix6d ad(const Vector6d&V);
     se3 VecTose3(const Vector6d& V) ;

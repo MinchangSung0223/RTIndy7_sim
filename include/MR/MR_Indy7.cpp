@@ -1,5 +1,4 @@
 #include "MR_Indy7.h"
-#include "../../src/PropertyDefinition.h"
 
 bool ReadFromFile(const char* filename, char* buffer, int len){
   FILE* r = fopen(filename,"rb");
@@ -56,6 +55,10 @@ MR_Indy7::MR_Indy7() {
     this->Hinf_Kp = mr::Matrix6d::Zero();
     this->Hinf_Kv = mr::Matrix6d::Zero();
     this->Hinf_K_gamma = mr::Matrix6d::Zero();
+    JVec  invL2sqr;
+    invL2sqr<< 800,600,500,500,500,600;
+
+
 
     for (int i=0; i<6; ++i)
     {
@@ -64,36 +67,36 @@ MR_Indy7::MR_Indy7() {
         case 0:
             Hinf_Kp(i,i) = 100.0;
             Hinf_Kv(i,i) = 20.0;
-            Hinf_K_gamma(i,i) = 50+1.0/invL2sqr_1 ;
+            Hinf_K_gamma(i,i) = 50+1.0/invL2sqr(i) ;
             break;
         case 1:
             Hinf_Kp(i,i) = 100.0;
             Hinf_Kv(i,i) = 20.0;
-            Hinf_K_gamma(i,i) = 50+1.0/invL2sqr_2 ;
+            Hinf_K_gamma(i,i) = 50+1.0/invL2sqr(i) ;
 
             break;
         case 2:
             Hinf_Kp(i,i) = 100.0;
             Hinf_Kv(i,i) = 20.0;
-            Hinf_K_gamma(i,i) = 50.0+1.0/invL2sqr_3 ;
+            Hinf_K_gamma(i,i) = 50.0+1.0/invL2sqr(i)  ;
 
             break;
         case 3:
             Hinf_Kp(i,i) = 100.0;
             Hinf_Kv(i,i) = 20.0;
-            Hinf_K_gamma(i,i) = 50.0+1.0/invL2sqr_4 ;
+            Hinf_K_gamma(i,i) = 50.0+1.0/invL2sqr(i)  ;
 
             break;
         case 4:
               Hinf_Kp(i,i) = 100.0;
             Hinf_Kv(i,i) = 20.0;
-            Hinf_K_gamma(i,i) = 50.0+1.0/invL2sqr_5 ;
+            Hinf_K_gamma(i,i) = 50.0+1.0/invL2sqr(i)  ;
 
             break;
         case 5:
             Hinf_Kp(i,i) = 100.0;
             Hinf_Kv(i,i) = 20.0;
-            Hinf_K_gamma(i,i) = 50.0+1.0/invL2sqr_6 ;
+            Hinf_K_gamma(i,i) = 50.0+1.0/invL2sqr(i)  ;
 
             break;
         }

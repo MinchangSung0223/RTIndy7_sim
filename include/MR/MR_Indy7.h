@@ -1,11 +1,12 @@
 #ifndef MR_INDY7_H
 #define MR_INDY7_H
-#include "include/NRMKSDK/json/json/json.h"
+#include <jsoncpp/json/json.h>
 #include "iostream"
+#include <Eigen/Dense>
+
 #include "modern_robotics.h"
 
 #pragma comment(lib, "jsoncpp.lib")
-#include <Eigen/Dense>
 using namespace Eigen;
 using namespace std;
 using namespace mr;

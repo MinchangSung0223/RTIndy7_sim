@@ -30,35 +30,8 @@ bool ReadMRData_(const char* filename,Json::Value &rootr){
 
     return 1;
 }
- void MR_Indy7_DualArm::setq(mr::JVec q_l, mr::JVec q_r){
-		for(int i = 0;i<JOINTNUM;i++){
-			this->q[i] = -q_l[JOINTNUM-i-1];
-			this->q[i+JOINTNUM] = q_r[i];
-		}
-		this->left_arm->q = q_l;
-		this->right_arm->q = q_r;
- };
- void MR_Indy7_DualArm::setdq(mr::JVec dq_l, mr::JVec dq_r){
-		for(int i = 0;i<JOINTNUM;i++){
-			this->dq[i] = -dq_l[JOINTNUM-i-1];
-			this->dq[i+JOINTNUM] = dq_r[i];
-		}
-		this->left_arm->dq = dq_l;
-		this->right_arm->dq = dq_r;
- };
+// q = q_r, -q_l_flip
 
- void MR_Indy7_DualArm::getq(mr::JVec& q_l, mr::JVec& q_r){
-		for(int i = 0;i<JOINTNUM;i++){
-			q_l[JOINTNUM-i-1] = -this->q[i];
-			q_r[i] = this->q[i+JOINTNUM];
-		}
- }; 
- void MR_Indy7_DualArm::getdq(mr::JVec& dq_l, mr::JVec& dq_r){
-		for(int i = 0;i<JOINTNUM;i++){
-			dq_l[JOINTNUM-i-1] = -this->dq[i];
-			dq_r[i] = this->dq[i+JOINTNUM];
-		}
- }; 
  MR_Indy7_DualArm::MR_Indy7_DualArm(){
     this->jointnum = 12;
     this->left_arm = new MR_Indy7();

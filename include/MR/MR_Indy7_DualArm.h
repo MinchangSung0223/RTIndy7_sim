@@ -1,6 +1,6 @@
 #ifndef MR_INDY7_DUALARM_H
 #define MR_INDY7_DUALARM_H
-#include "include/NRMKSDK/json/json/json.h"
+#include <jsoncpp/json/json.h>
 #include "iostream"
 #include "MR_Indy7.h"
 
